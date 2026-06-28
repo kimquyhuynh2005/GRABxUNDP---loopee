@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
-import { supabase, DEMO_USER_ID } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
+import { useUser } from '../contexts/UserContext'
 
 interface Member { id: string; nickname: string; joined_at: string }
 interface Group { id: string; invite_code: string; expires_at: string; status: string }
@@ -9,6 +10,7 @@ interface Group { id: string; invite_code: string; expires_at: string; status: s
 export default function GroupWaitingRoom() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const user = useUser()
   const [group, setGroup] = useState<Group | null>(null)
   const [members, setMembers] = useState<Member[]>([])
   const [locking, setLocking] = useState(false)
@@ -65,14 +67,14 @@ export default function GroupWaitingRoom() {
       const deadline = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
 
       const { data: order } = await supabase.from('orders').insert({
-        order_code: orderCode, user_id: DEMO_USER_ID, status: 'preparing',
+        order_code: orderCode, user_id: user?.id ?? '', status: 'preparing',
         eco_box_count: 2, return_deadline: deadline, reward_pct: 100,
       }).select().single()
 
       if (order) {
         await supabase.from('group_orders').update({ status: 'placed' }).eq('id', id)
         await supabase.from('return_tokens').insert({
-          order_id: order.id, user_id: DEMO_USER_ID,
+          order_id: order.id, user_id: user?.id ?? '',
           token_code: 'LOOP-' + Math.random().toString(36).substr(2, 8).toUpperCase(),
         })
         navigate(`/order-success/${order.id}`)

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { supabase, DEMO_USER_ID } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
+import { useUser } from '../contexts/UserContext'
 
 interface Voucher {
   id: string
@@ -72,15 +73,17 @@ function EcoPartnerCard({ v }: { v: Voucher }) {
 }
 
 export default function MyRewards() {
+  const user = useUser()
   const [dineIn, setDineIn] = useState<Voucher[]>([])
   const [ecoPartners, setEcoPartners] = useState<Voucher[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!user?.id) return
     supabase
       .from('user_vouchers')
       .select('vouchers(*)')
-      .eq('user_id', DEMO_USER_ID)
+      .eq('user_id', user.id)
       .eq('is_used', false)
       .then(({ data }) => {
         const vouchers = (data ?? []).map((row: any) => row.vouchers).filter(Boolean)
@@ -88,7 +91,7 @@ export default function MyRewards() {
         setEcoPartners(vouchers.filter((v: Voucher) => v.category === 'chtl_eco_partner'))
         setLoading(false)
       })
-  }, [])
+  }, [user?.id])
 
   const total = dineIn.length + ecoPartners.length
 

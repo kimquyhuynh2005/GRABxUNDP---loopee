@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, DEMO_USER_ID } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
+import { useUser } from '../contexts/UserContext'
 
 interface PopupState {
   visible: boolean
@@ -10,14 +11,16 @@ interface PopupState {
 
 export default function RewardPopup() {
   const navigate = useNavigate()
+  const user = useUser()
   const [state, setState] = useState<PopupState>({ visible: false, points: 0, pct: 100 })
 
   useEffect(() => {
+    if (!user?.id) return
     const channel = supabase
       .channel('reward-popup')
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'return_tokens', filter: `user_id=eq.${DEMO_USER_ID}` },
+        { event: 'UPDATE', schema: 'public', table: 'return_tokens', filter: `user_id=eq.${user.id}` },
         (payload) => {
           const n = payload.new as Record<string, unknown>
           const o = payload.old as Record<string, unknown>
@@ -29,7 +32,7 @@ export default function RewardPopup() {
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }
-  }, [])
+  }, [user?.id])
 
   if (!state.visible) return null
 

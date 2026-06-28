@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { supabase, DEMO_USER_ID } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
 import { useToast } from '../contexts/ToastContext'
 import { useUser } from '../contexts/UserContext'
 
@@ -29,7 +29,7 @@ export default function JoinGroup() {
       if (!group) { showToast('Invalid or expired code', 'error'); return }
 
       await supabase.from('group_order_members').insert({
-        group_order_id: group.id, user_id: DEMO_USER_ID,
+        group_order_id: group.id, user_id: user?.id ?? '',
         nickname: user?.name ?? 'Guest',
       })
       navigate(`/group/${group.id}`)

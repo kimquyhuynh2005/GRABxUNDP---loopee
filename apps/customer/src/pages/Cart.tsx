@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, DEMO_USER_ID } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
 import { useCart } from '../contexts/CartContext'
 import { useToast } from '../contexts/ToastContext'
 import { useUser } from '../contexts/UserContext'
@@ -66,17 +66,17 @@ export default function Cart() {
   const totalQty = items.reduce((s, i) => s + i.quantity, 0)
 
   const placeOrder = async () => {
-    if (items.length === 0 || placing) return
+    if (items.length === 0 || placing || !user?.id) return
 
     if (orderType === 'group') {
       try {
         const { data: group } = await supabase
           .from('group_orders')
-          .insert({ leader_id: DEMO_USER_ID, restaurant_id: restaurantId, status: 'open' })
+          .insert({ leader_id: user.id, restaurant_id: restaurantId, status: 'open' })
           .select().single()
         if (!group) throw new Error()
         await supabase.from('group_order_members').insert({
-          group_order_id: group.id, user_id: DEMO_USER_ID, nickname: user?.name ?? 'You',
+          group_order_id: group.id, user_id: user.id, nickname: user?.name ?? 'You',
         })
         navigate(`/group/${group.id}`)
       } catch {
@@ -101,7 +101,7 @@ export default function Cart() {
         .from('orders')
         .insert({
           order_code: orderCode,
-          user_id: DEMO_USER_ID,
+          user_id: user.id,
           restaurant_id: restaurantId,
           restaurant_name: restaurantName,
           status: 'preparing',
@@ -119,7 +119,7 @@ export default function Cart() {
           Math.random().toString(36).substr(2, 4).toUpperCase()
         await supabase.from('return_tokens').insert({
           order_id: order.id,
-          user_id: DEMO_USER_ID,
+          user_id: user.id,
           token_code: token,
           is_used: false,
         })
@@ -128,7 +128,7 @@ export default function Cart() {
       await supabase
         .from('users')
         .update({ total_orders: (user?.total_orders ?? 0) + 1 })
-        .eq('id', DEMO_USER_ID)
+        .eq('id', user.id)
 
       clearCart()
       navigate(`/order-success/${order.id}`)
