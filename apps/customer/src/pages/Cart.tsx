@@ -262,53 +262,49 @@ export default function Cart() {
         </div>
 
         {/* Eco box section */}
-        <div className={`rounded-2xl overflow-hidden shadow-sm transition-colors duration-300 ${useEco ? 'bg-[#1a4731]' : 'bg-white'}`}>
+        <div className={`rounded-2xl shadow-sm transition-colors duration-300 ${useEco ? 'bg-[#1a3d2b]' : 'bg-white'}`}>
           <div className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${useEco ? 'bg-white/15' : 'bg-green-50'}`}>
-                  <span className="text-2xl">🌿</span>
-                </div>
-                <div>
-                  <p className={`font-bold text-[14px] ${useEco ? 'text-white' : 'text-gray-900'}`}>
-                    Use Eco Boxes
-                  </p>
-                  <p className={`text-xs mt-0.5 leading-tight ${useEco ? 'text-green-300' : 'text-gray-500'}`}>
-                    {useEco
-                      ? `${ecoCount} box${ecoCount > 1 ? 'es' : ''} · Return in 24h → earn points`
-                      : 'Return in 24h · Earn reward points'}
-                  </p>
-                </div>
+            {/* Row 1: icon + text + toggle */}
+            <div className="flex items-center gap-3">
+              <div className={`rounded-xl p-2 shrink-0 ${useEco ? 'bg-green-700' : 'bg-green-50'}`}>
+                <span className="text-xl">🌿</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={`font-semibold text-sm ${useEco ? 'text-white' : 'text-gray-900'}`}>Use Eco Boxes</p>
+                <p className={`text-xs mt-0.5 ${useEco ? 'text-green-300' : 'text-gray-500'}`}>
+                  {ecoCount} box{ecoCount > 1 ? 'es' : ''} · Return in 24h → earn points
+                </p>
               </div>
               <button
                 onClick={() => setUseEco(!useEco)}
-                className={`relative w-12 h-6 rounded-full transition-colors flex-shrink-0 ${useEco ? 'bg-green-400' : 'bg-gray-200'}`}
+                className={`shrink-0 w-12 h-6 rounded-full transition-colors ${useEco ? 'bg-green-400' : 'bg-gray-300'}`}
               >
-                <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${useEco ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform mx-0.5 ${useEco ? 'translate-x-6' : 'translate-x-0'}`} />
               </button>
             </div>
 
             {useEco && (
               <>
-                <div className="mt-3.5 h-px bg-white/10" />
-                <div className="mt-3.5 flex items-center justify-between">
+                <div className="border-t border-green-700 my-3" />
+                {/* Row 2: box count */}
+                <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-white/70 font-medium">Number of boxes</p>
-                    <p className="text-xs text-green-300 mt-0.5">{fmt(ECO_DEPOSIT)}/box · fully refunded on return</p>
+                    <p className="text-green-300 text-xs font-medium">Number of boxes</p>
+                    <p className="text-green-400 text-xs mt-0.5">{fmt(ECO_DEPOSIT)}/box · fully refunded on return</p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 shrink-0">
                     <button
                       onClick={() => setEcoCount(Math.max(1, ecoCount - 1))}
-                      className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center active:scale-90 transition-transform"
+                      className="w-8 h-8 rounded-full bg-green-800 text-white flex items-center justify-center text-lg font-bold active:scale-90 transition-transform"
                     >
-                      <Minus color="white" />
+                      −
                     </button>
-                    <span className="text-base font-bold text-white w-4 text-center">{ecoCount}</span>
+                    <span className="text-white font-bold text-base w-4 text-center">{ecoCount}</span>
                     <button
                       onClick={() => setEcoCount(ecoCount + 1)}
-                      className="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center active:scale-90 transition-transform"
+                      className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-lg font-bold active:scale-90 transition-transform"
                     >
-                      <Plus color="white" />
+                      +
                     </button>
                   </div>
                 </div>
