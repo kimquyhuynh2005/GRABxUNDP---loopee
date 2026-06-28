@@ -208,16 +208,20 @@ export default function RestaurantDetail() {
         )}
       </div>
 
-      {/* Sticky cart button */}
+      {/* Sticky View Cart bar */}
       {totalItems > 0 && (
-        <button
-          onClick={() => navigate('/cart')}
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(390px-32px)] bg-green-600 text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-lg z-50 active:scale-[0.98] transition-transform"
-        >
-          <span className="bg-green-500 rounded-xl w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">{totalItems}</span>
-          <span className="font-semibold text-sm">View Cart</span>
-          <span className="font-semibold text-sm">{totalPrice.toLocaleString('vi-VN')}đ</span>
-        </button>
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] px-4 pb-6 pt-3 z-50 pointer-events-none">
+          <button
+            onClick={() => navigate('/cart')}
+            className="pointer-events-auto w-full bg-green-600 text-white rounded-2xl px-4 py-3.5 flex items-center justify-between shadow-2xl active:scale-[0.98] transition-transform"
+          >
+            <span className="bg-green-500 rounded-xl w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">
+              {totalItems}
+            </span>
+            <span className="font-semibold text-[15px]">View Cart</span>
+            <span className="font-bold text-[15px]">{totalPrice.toLocaleString('vi-VN')}đ</span>
+          </button>
+        </div>
       )}
     </div>
   )

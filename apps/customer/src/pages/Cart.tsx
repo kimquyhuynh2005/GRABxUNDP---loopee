@@ -37,6 +37,12 @@ function Plus({ color = 'white' }: { color?: string }) {
   )
 }
 
+const SAVED_ADDRESSES = [
+  { id: 1, label: 'Home', detail: '123 Nguyễn Trãi, Phường Nguyễn Cư Trinh, Quận 1', distance: '2.4 km' },
+  { id: 2, label: 'Work', detail: '45 Lê Lợi, Phường Bến Nghé, Quận 1', distance: '1.2 km' },
+  { id: 3, label: 'Other', detail: '88 Võ Thị Sáu, Quận 3', distance: '3.1 km' },
+]
+
 export default function Cart() {
   const navigate = useNavigate()
   const { items, updateQty, clearCart, totalPrice, restaurantId, restaurantName } = useCart()
@@ -49,6 +55,11 @@ export default function Cart() {
   const [placing, setPlacing] = useState(false)
   const [joinCode, setJoinCode] = useState('')
   const [promoCode, setPromoCode] = useState('')
+
+  // Address state
+  const [selectedAddress, setSelectedAddress] = useState(SAVED_ADDRESSES[0])
+  const [showAddressModal, setShowAddressModal] = useState(false)
+  const [customAddress, setCustomAddress] = useState('')
 
   const ecoDeposit = useEco ? ecoCount * ECO_DEPOSIT : 0
   const total = totalPrice + DELIVERY_FEE + ecoDeposit
@@ -149,6 +160,7 @@ export default function Cart() {
   }
 
   return (
+    <>
     <div className="min-h-svh bg-[#f0f7ee] max-w-[390px] mx-auto shadow-2xl">
       {/* Header */}
       <div className="bg-white px-4 pt-14 pb-4">
@@ -324,10 +336,13 @@ export default function Cart() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5">Deliver to</p>
-              <p className="text-sm font-semibold text-gray-900">123 Nguyễn Trãi, Quận 1</p>
-              <p className="text-xs text-gray-400 mt-0.5">~2.4 km · est. 25–35 min</p>
+              <p className="text-sm font-semibold text-gray-900 leading-snug">{selectedAddress.detail}</p>
+              <p className="text-xs text-gray-400 mt-0.5">~{selectedAddress.distance} · est. 25–35 min</p>
             </div>
-            <button className="text-xs text-green-600 font-bold bg-green-50 px-3 py-1.5 rounded-lg flex-shrink-0 mt-0.5">
+            <button
+              onClick={() => setShowAddressModal(true)}
+              className="text-xs text-green-600 font-bold bg-green-50 px-3 py-1.5 rounded-lg flex-shrink-0 mt-0.5 active:scale-95 transition-transform"
+            >
               Edit
             </button>
           </div>
@@ -426,5 +441,90 @@ export default function Cart() {
         </div>
       </div>
     </div>
+
+    {/* Address edit bottom sheet */}
+    {showAddressModal && (
+      <div
+        className="fixed inset-0 z-[100] flex items-end justify-center"
+        onClick={() => setShowAddressModal(false)}
+      >
+        {/* Backdrop */}
+        <div className="absolute inset-0 bg-black/40" />
+
+        {/* Sheet */}
+        <div
+          className="relative w-full max-w-[390px] bg-white rounded-t-3xl px-5 pt-5 pb-10 shadow-2xl"
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Handle */}
+          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Delivery address</h3>
+
+          {/* Saved addresses */}
+          <div className="space-y-2 mb-4">
+            {SAVED_ADDRESSES.map(addr => (
+              <button
+                key={addr.id}
+                onClick={() => { setSelectedAddress(addr); setShowAddressModal(false) }}
+                className={`w-full flex items-start gap-3 p-3.5 rounded-2xl border-2 text-left transition-colors ${
+                  selectedAddress.id === addr.id
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-gray-100 bg-white'
+                }`}
+              >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                  selectedAddress.id === addr.id ? 'bg-green-100' : 'bg-gray-100'
+                }`}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                    stroke={selectedAddress.id === addr.id ? '#16a34a' : '#6b7280'}
+                    strokeWidth="2" strokeLinecap="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-bold ${
+                    selectedAddress.id === addr.id ? 'text-green-700' : 'text-gray-800'
+                  }`}>{addr.label}</p>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-snug">{addr.detail}</p>
+                </div>
+                {selectedAddress.id === addr.id && (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" className="flex-shrink-0 mt-1">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Custom address input */}
+          <div className="border-t border-gray-100 pt-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Or enter a new address</p>
+            <div className="flex gap-2">
+              <input
+                value={customAddress}
+                onChange={e => setCustomAddress(e.target.value)}
+                className="flex-1 border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-green-400 transition-colors"
+                placeholder="Street, Ward, District..."
+              />
+              <button
+                onClick={() => {
+                  if (!customAddress.trim()) return
+                  setSelectedAddress({ id: 99, label: 'Custom', detail: customAddress.trim(), distance: '—' })
+                  setCustomAddress('')
+                  setShowAddressModal(false)
+                }}
+                disabled={!customAddress.trim()}
+                className="bg-green-600 text-white rounded-xl px-4 py-2.5 text-sm font-bold disabled:opacity-40 active:scale-95 transition-transform flex-shrink-0"
+              >
+                Use
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }
