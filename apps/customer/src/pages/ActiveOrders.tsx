@@ -53,7 +53,6 @@ function OrderCard({ order }: { order: Order }) {
 
   const isCancelled = order.status === 'cancelled'
   const isReturned  = order.status === 'returned'
-  const isDelivered = order.status === 'delivered'
   const isActive    = ['confirmed', 'preparing', 'ready', 'out_for_delivery'].includes(order.status)
 
   const barColor  = isDead ? 'bg-gray-300' : isDecaying ? 'bg-orange-400' : 'bg-green-500'
