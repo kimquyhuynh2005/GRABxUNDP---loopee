@@ -215,8 +215,8 @@ export default function RestaurantDetail() {
           className="fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(390px-32px)] bg-green-600 text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-lg z-50 active:scale-[0.98] transition-transform"
         >
           <span className="bg-green-500 rounded-xl w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">{totalItems}</span>
-          <span className="font-semibold text-base">View Cart</span>
-          <span className="font-semibold text-base">{totalPrice.toLocaleString('vi-VN')}đ</span>
+          <span className="font-semibold text-sm">View Cart</span>
+          <span className="font-semibold text-sm">{totalPrice.toLocaleString('vi-VN')}đ</span>
         </button>
       )}
     </div>

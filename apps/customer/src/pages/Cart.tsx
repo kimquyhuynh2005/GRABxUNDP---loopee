@@ -277,9 +277,9 @@ export default function Cart() {
               </div>
               <button
                 onClick={() => setUseEco(!useEco)}
-                className={`shrink-0 w-12 h-6 rounded-full transition-colors ${useEco ? 'bg-green-400' : 'bg-gray-300'}`}
+                className={`relative shrink-0 w-12 h-6 rounded-full transition-colors ${useEco ? 'bg-green-400' : 'bg-gray-300'}`}
               >
-                <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform mx-0.5 ${useEco ? 'translate-x-6' : 'translate-x-0'}`} />
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${useEco ? 'translate-x-6' : 'translate-x-0'}`} />
               </button>
             </div>
 
