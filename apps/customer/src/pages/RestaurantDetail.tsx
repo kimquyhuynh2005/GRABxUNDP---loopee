@@ -82,7 +82,7 @@ function QtyControl({ qty, onMinus, onPlus }: { qty: number; onMinus: () => void
 export default function RestaurantDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { addItem, updateQty, items, totalItems, totalPrice, restaurantName } = useCart()
+  const { addItem, updateQty, items, totalItems, totalPrice } = useCart()
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null)
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
